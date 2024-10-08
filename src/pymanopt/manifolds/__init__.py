@@ -9,6 +9,7 @@ __all__ = [
     "HermitianPositiveDefinite",
     "SpecialHermitianPositiveDefinite",
     "Oblique",
+    "ProbabilitySimplex",
     "PSDFixedRank",
     "PSDFixedRankComplex",
     "PoincareBall",
@@ -38,6 +39,7 @@ from .positive_definite import (
     SpecialHermitianPositiveDefinite,
     SymmetricPositiveDefinite,
 )
+from .probability_simplex import ProbabilitySimplex
 from .product import Product
 from .psd import Elliptope, PSDFixedRank, PSDFixedRankComplex
 from .sphere import (
