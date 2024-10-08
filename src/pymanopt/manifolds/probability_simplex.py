@@ -193,9 +193,10 @@ class ProbabilitySimplex(Manifold):
         """
         X = np.zeros((self._m + 1))
         if not np.allclose(point_a, point_b):
-            z = self.dist(point_a, point_b)
+            z = np.sqrt(point_a * point_b)
             s = np.sum(z)
-            X = (2 * np.arccos(s) / (1.0 - s**2)) * (z - s * point_a)
+            c = 2 * np.arccos(s) / np.sqrt(1.0 - s**2)
+            X = c * (z - s * point_a)
         return X
 
     @staticmethod

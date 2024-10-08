@@ -54,6 +54,21 @@ class TestSphereManifold:
         )
         # @test isapprox(M, p, X, Y)
 
+    def test_log(self):
+        p = np.array([1.0 / 2, 1.0 / 3, 1.0 / 6])
+        q = np.array([0.2, 0.3, 0.5])
+        X = self.manifold.log(p, q)
+        assert np.allclose(
+            X,
+            np.array(
+                [
+                    -0.2965121489310675,
+                    0.018867090771124348,
+                    0.27764505815994317,
+                ]
+            ),
+        )
+
     # def test_norm
 
     # def test_random_point
@@ -72,8 +87,7 @@ class TestSphereManifold:
 
     # def test_exp
 
-    # def test_log
-
+    #
     # def test__normalize
 
     # def test_retraction
