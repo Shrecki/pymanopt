@@ -171,7 +171,7 @@ class ProbabilitySimplex(Manifold):
         s = np.sqrt(point)
         Xs = 0.5 * (tangent_vector / s)
         theta = np.linalg.norm(Xs)
-        q = (np.cos(theta) * s + usinc(theta) * tangent_vector) ** 2
+        q = (np.cos(theta) * s + usinc(theta) * Xs) ** 2
         return q
 
     def log(self, point_a, point_b):

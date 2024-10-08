@@ -69,6 +69,26 @@ class TestSphereManifold:
             ),
         )
 
+        p = np.array([1.0 / 2, 1.0 / 4, 1.0 / 4])
+        X = self.manifold.log(p, q)
+        assert np.allclose(
+            X,
+            np.array(
+                [-0.3171678647294765, 0.07736015116476168, 0.23980771356471503]
+            ),
+        )
+
+    def test_exp(self):
+        p = np.array([1.0 / 2, 1.0 / 4, 1.0 / 4])
+        q = np.array([0.2, 0.3, 0.5])
+        X = self.manifold.exp(p, q)
+        assert np.allclose(
+            X,
+            np.array(
+                [0.5136415708782431, 0.4830097714918066, 0.7800478959359726]
+            ),
+        )
+
     # def test_norm
 
     # def test_random_point
@@ -85,9 +105,6 @@ class TestSphereManifold:
 
     # def test_euclidean_to_riemannian_hessian
 
-    # def test_exp
-
-    #
     # def test__normalize
 
     # def test_retraction
