@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 
 from pymanopt.manifolds.manifold import Manifold
 
@@ -119,7 +120,10 @@ class ProbabilitySimplex(Manifold):
         Returns:
             out: A tangent vector in tangent space.
         """
-        return np.sqrt(np.diag(point) - np.outer(point, point)) @ X
+        d = np.diag(point) - np.outer(point, point)
+
+        # Compute matrix square root!
+        return scipy.linalg.sqrtm(d) @ X
 
     def zero_vector(self, point):
         return np.zeros(point.shape)
@@ -191,7 +195,7 @@ class ProbabilitySimplex(Manifold):
         if not np.allclose(point_a, point_b):
             z = self.dist(point_a, point_b)
             s = np.sum(z)
-            X = (2 * np.acos(s) / (1.0 - s**2)) * (z - s * point_a)
+            X = (2 * np.arccos(s) / (1.0 - s**2)) * (z - s * point_a)
         return X
 
     @staticmethod
