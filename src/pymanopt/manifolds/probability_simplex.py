@@ -66,7 +66,7 @@ class ProbabilitySimplex(Manifold):
             d = (tangent_vector_a / point) @ tangent_vector_b
         else:
             mask = point > 0
-            d = tangent_vector_a[mask] @ tangent_vector_b[mask]
+            d = (tangent_vector_a[mask] / point[mask]) @ tangent_vector_b[mask]
         return d
 
     def projection(self, point, vector):
