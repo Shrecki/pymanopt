@@ -123,6 +123,14 @@ class TestSphereManifold:
             M.euclidean_to_riemannian_gradient(p, Y), M.projection(p, X)
         )
 
+    def test_dist(self):
+        M = ProbabilitySimplex(4)  # n=5
+        p = np.array([0.1, 0.2, 0.4, 0.2, 0.1])
+        q = np.array([0.4, 0.3, 0.1, 0.1, 0.1])
+        expectedDist = 2 * np.arccos(np.sum(np.sqrt(p * q)))
+        actualDist = M.dist(p, q)
+        assert np.allclose(expectedDist, actualDist)
+
     # def test_norm
 
     # def test_random_point
@@ -130,10 +138,6 @@ class TestSphereManifold:
     # def test_random_tangent_vector
 
     # def test_zero_vector
-
-    # def test_dist
-
-    # def test_euclidean_to_riemannian_gradient
 
     # def test_euclidean_to_riemannian_hessian
 
