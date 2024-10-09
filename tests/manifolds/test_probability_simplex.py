@@ -93,9 +93,16 @@ class TestSphereManifold:
         p = np.array([1 / 2, 1 / 3, 1 / 6])
         q = np.array([0.2, 0.3, 0.5])
         X = self.manifold.log(p, q)
+        # print(X)
         X2 = X + 10
+        # print(X2)
         Y = self.manifold.projection(p, X2)
-        assert np.allclose(X, Y)
+        assert np.allclose(
+            np.array(
+                [-5.296512148931068, 0.018867090771124, 5.277645058159942]
+            ),
+            Y,
+        )
 
     def test_euclidean_to_riemannian_gradient(self):
         M = ProbabilitySimplex(4)  # n=5
@@ -123,6 +130,13 @@ class TestSphereManifold:
             M.euclidean_to_riemannian_gradient(p, Y), M.projection(p, X)
         )
 
+        p = np.array([0.2, 0.4, 0.1, 0.3])
+        grad = np.array([2, -3, 0.5, 4])
+        exp_grad = np.array([0.31, -1.38, 0.005, 1.065])
+        assert np.allclose(
+            M.euclidean_to_riemannian_gradient(p, grad), exp_grad
+        )
+
     def test_dist(self):
         M = ProbabilitySimplex(4)  # n=5
         p = np.array([0.1, 0.2, 0.4, 0.2, 0.1])
@@ -130,6 +144,53 @@ class TestSphereManifold:
         expectedDist = 2 * np.arccos(np.sum(np.sqrt(p * q)))
         actualDist = M.dist(p, q)
         assert np.allclose(expectedDist, actualDist)
+
+    def test_euclidean_to_riemannian_hessian(self):
+        M = ProbabilitySimplex(4)  # n=5
+        p = np.array([0.2, 0.4, 0.1, 0.3])
+        egrad = np.array([2, -3, 0.5, 4])
+        ehess = np.array(
+            [[2, 0.4, 3, 2], [-1, 10, 9, -2], [11, 20, 0.1, 30], [4, 2, 3, -3]]
+        )
+
+        expected = np.array(
+            [
+                [0.095, -1.1010, -0.267, 0.215],
+                [-2.01, 0.638, 0.866, -2.17],
+                [0.8725, 1.3345, -0.4985, 2.8325],
+                [1.0425, -0.8715, -0.1005, -0.8775],
+            ]
+        )
+        actual = M.euclidean_to_riemannian_hessian(p, egrad, ehess, p)
+        assert np.allclose(expected, actual)
+
+        # Similar test, but with n=6
+        M = ProbabilitySimplex(5)  # n=5
+        p = np.array([0.2, 0.4, 0.1, 0.1, 0.2])
+        egrad = np.array([2, -3, 0.5, 4, 3])
+        ehess = np.array(
+            [
+                [2, 0.4, 3, 2, 2],
+                [-1, 10, 9, -2, 45],
+                [11, 20, 0.1, 30, 28],
+                [4, 2, 3, -3, 12],
+                [28, 2, -30, 4.4, -54.2],
+            ]
+        )
+
+        expected = np.array(
+            [
+                [-0.845, -1.081, 1.073, -0.061, -1.737],
+                [-3.89, 0.678, 3.546, -2.722, 12.726],
+                [0.4025, 1.3445, 0.1715, 2.6945, 1.6565],
+                [-0.1225, -0.2805, 0.6365, -0.4305, 0.2315],
+                [4.455, -0.661, -5.427, 0.519, -12.877],
+            ]
+        )
+        actual = M.euclidean_to_riemannian_hessian(p, egrad, ehess, p)
+        assert np.allclose(expected, actual)
+
+        # assert False
 
     # def test_norm
 

@@ -84,7 +84,14 @@ class ProbabilitySimplex(Manifold):
             out: An element of the tangent space at point closest to vector
             in the ambient space.
         """
-        return vector - np.mean(vector)
+        # return vector - np.sum(vector)*point
+        alpha = np.sum(vector, axis=0)
+        # print("alpha:", alpha)
+        rh = point * alpha if len(alpha.shape) == 0 else np.outer(point, alpha)
+        # print(rh)
+        # print(vector -rh)
+        return vector - rh
+        # return vector - np.mean(vector)
 
     to_tangent_space = projection
 
@@ -150,7 +157,33 @@ class ProbabilitySimplex(Manifold):
     def euclidean_to_riemannian_hessian(
         self, point, euclidean_gradient, euclidean_hessian, tangent_vector
     ):
-        return self.projection(point, euclidean_hessian)
+        # Based on MATLAB code of multinomial factory as it wasn't
+        # present in Julia Manifolds
+        X_grad = point * euclidean_gradient
+        X_grad_s = -np.sum(X_grad, axis=0)
+        riemann_grad = self.euclidean_to_riemannian_gradient(
+            point, euclidean_gradient
+        )
+
+        X_hess = np.diag(point) @ euclidean_hessian
+        tangent_euclidean_grad = tangent_vector * euclidean_gradient
+        lambda_dot = -np.sum(tangent_euclidean_grad, axis=0) - np.sum(
+            X_hess, axis=0
+        )
+
+        lh = tangent_euclidean_grad.reshape((-1, 1)) + X_hess
+        rh = np.outer(point, lambda_dot) + (X_grad_s * tangent_vector).reshape(
+            (-1, 1)
+        )
+        riemann_grad_dot = lh + rh
+
+        # Correction term because of the non-constant metric that we
+        # impose. The computation of the correction term follows the use of
+        # Koszul formula.
+        correction_term = -0.5 * (tangent_vector * riemann_grad) / point
+        riemann_hess = riemann_grad_dot + correction_term.reshape((-1, 1))
+
+        return self.projection(point, riemann_hess)
 
     def exp(self, point, tangent_vector):
         r"""Computes the exponential map on the manifold.
