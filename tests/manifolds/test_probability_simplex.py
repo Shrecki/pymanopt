@@ -192,7 +192,45 @@ class TestSphereManifold:
 
         # assert False
 
-    # def test_norm
+    def test_norm(self):
+        M = ProbabilitySimplex(5)  # n=5
+        p = np.array([0.2, 0.4, 0.1, 0.1, 0.2])
+        egrad = np.array([2, -3, 0.5, 4, 3])
+
+        expected_norm = 15.811388300841896
+        actual_norm = M.norm(p, egrad)
+        assert np.allclose(expected_norm, actual_norm)
+
+    def test_retraction(self):
+        M = ProbabilitySimplex(5)  # n=5
+        p = np.array([0.2, 0.4, 0.1, 0.1, 0.2])
+        egrad = np.array([2, -3, 0.5, 4, 3])
+
+        expected_retraction = np.array(
+            [
+                0.000000000000187,
+                0.000000000000000,
+                0.000000000000001,
+                0.999999999972036,
+                0.000000000027776,
+            ]
+        )
+
+        actual_retraction = M.retraction(p, egrad)
+
+        assert np.allclose(expected_retraction, actual_retraction)
+
+        expected_retraction = np.array(
+            [
+                0.013267738500760,
+                0.002178164593154,
+                0.984553492522373,
+                0.000000002029316,
+                0.000000602354396,
+            ]
+        )
+        actual_retraction = M.retraction(p, np.array([1, 1, 1, -1, -1]))
+        assert np.allclose(expected_retraction, actual_retraction)
 
     # def test_random_point
 
@@ -200,8 +238,6 @@ class TestSphereManifold:
 
     # def test_zero_vector
 
-    # def test_euclidean_to_riemannian_hessian
-
     # def test__normalize
 
-    # def test_retraction
+    #

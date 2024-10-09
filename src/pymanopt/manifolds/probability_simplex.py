@@ -234,7 +234,11 @@ class ProbabilitySimplex(Manifold):
 
     @staticmethod
     def _normalize(point):
-        return point / np.sum(point)
+        _eps = 2e-52
+        p = point / np.sum(point)
+        p[p < _eps] = _eps
+        return p
 
     def retraction(self, point, tangent_vector):
-        return self._normalize(point + tangent_vector)
+        y = point * np.exp(tangent_vector / point)
+        return self._normalize(y)
