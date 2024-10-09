@@ -89,13 +89,45 @@ class TestSphereManifold:
             ),
         )
 
+    def test_projection(self):
+        p = np.array([1 / 2, 1 / 3, 1 / 6])
+        q = np.array([0.2, 0.3, 0.5])
+        X = self.manifold.log(p, q)
+        X2 = X + 10
+        Y = self.manifold.projection(p, X2)
+        assert np.allclose(X, Y)
+
+    def test_euclidean_to_riemannian_gradient(self):
+        M = ProbabilitySimplex(4)  # n=5
+        # For f(p) = \sum_i 1/n log(p_i) we know the Euclidean gradient
+
+        def grad_f_eucl(p):
+            return 1.0 / (5 * p)
+
+        # but we can also easily derive the Riemannian one
+
+        def grad_f(p):
+            return 1.0 / 5 - p
+
+        # We take some point
+        p = np.array([0.1, 0.2, 0.4, 0.2, 0.1])
+        Y = grad_f_eucl(p)
+        X = grad_f(p)
+        # print(M.euclidean_to_riemannian_gradient(p,Y))
+        # print(M.projection(p,X))
+        # @test isapprox(M, p, X, riemannian_gradient(M, p, Y))
+        # Z = zero_vector(M, p)
+        # riemannian_gradient!(M, Z, p, Y)
+        # @test X == Z
+        assert np.allclose(
+            M.euclidean_to_riemannian_gradient(p, Y), M.projection(p, X)
+        )
+
     # def test_norm
 
     # def test_random_point
 
     # def test_random_tangent_vector
-
-    # def test_projection
 
     # def test_zero_vector
 
